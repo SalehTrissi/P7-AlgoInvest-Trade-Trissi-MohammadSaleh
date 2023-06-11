@@ -84,3 +84,49 @@ def maximize_profit(shares_list, max_budget):
                     max_profit = total_profit
                     best_investment = combination
     return best_investment, max_profit
+
+
+def display_investment(investment, profit):
+    """
+    Displays the best investment options and total profit.
+
+    Args:
+        investment (tuple): Best investment options as a tuple (combination, profit).
+        profit (float): Total profit.
+    """
+    if not investment:
+        print("\033[1;31mNo feasible investment options within the given constraints.\033[0m")
+    else:
+        print("\033[1;35m{: ^75}\033[0m".format("Best investment options:"))
+        total_cost = sum(stock[1] for stock in investment)
+        for stock in investment:
+            print(f"- \033[1;34mAction: {stock[0]}\033[0m || "
+                  f"\033[1;32mCost per share: {stock[1]} euros\033[0m || "
+                  f"\033[1;33mProfit after 2 years: {stock[2]}%\033[0m")
+        print("\033[1;31m{: ^75}\033[0m".format(f"Total cost: {total_cost}"))
+        print("\033[1;31m{: ^75}\033[0m".format(f"Total profit after 2 years: {profit: .2f}"))
+
+
+def main():
+    file_path = '../data/test_shares.csv'
+    max_budget = 500
+
+    # Start timing
+    start_time = time.time()
+
+    # Read shares data from the CSV file
+    shares_list = read_csv_file(file_path)
+
+    # Find the best investment options
+    best_investment, max_profit = maximize_profit(shares_list, max_budget)
+
+    # Display the investment options and profit
+    display_investment(best_investment, max_profit)
+
+    # Calculate the elapsed time
+    elapsed_time = time.time() - start_time
+    print("\033[1;35m{: ^75}\033[0m".format(f"Elapsed time: {elapsed_time:.2f} seconds"))
+
+
+if __name__ == '__main__':
+    main()
