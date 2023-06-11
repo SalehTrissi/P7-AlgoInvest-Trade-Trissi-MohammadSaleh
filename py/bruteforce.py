@@ -30,3 +30,4 @@ def read_csv_file(file_path):
             shares_list.append((action, cost, profit))
 
     return shares_list
+ 
