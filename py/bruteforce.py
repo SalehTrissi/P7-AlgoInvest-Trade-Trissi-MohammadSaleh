@@ -18,6 +18,7 @@ def read_csv_file(file_path):
     # Open the CSV file
     with open(file_path) as csvfile:
         reader = csv.reader(csvfile)
+        next(reader)  # Skip the header row
 
         # Read each row in the CSV file
         for row in reader:
@@ -69,7 +70,7 @@ def maximize_profit(shares_list, max_budget):
         max_budget (float): Maximum budget for the investment.
 
     Returns:
-        tuple: Best investment options as a tuple (combination, profit).
+        tuple: the Best investment options as a tuple (combination, profit).
     """
     max_profit = 0
     best_investment = ()
