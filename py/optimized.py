@@ -16,12 +16,16 @@ def read_csv_file(file_path):
 
     with open(file_path) as csvfile:
         reader = csv.reader(csvfile)
+        next(reader)  # Skip the header row
 
         for row in reader:
             action = row[0].strip()
             cost = float(row[1])
             profit = float(row[2])
-            shares_list.append((action, cost, profit))
+
+            # Exclude shares with negative costs
+            if cost >= 0:
+                shares_list.append((action, cost, profit))
     return shares_list
 
 
@@ -34,7 +38,7 @@ def maximize_profit(shares_list, max_budget):
         max_budget (float): Maximum budget for the investment.
 
     Returns:
-        tuple: Best investment options as a tuple (combination, profit).
+        tuple: the Best investment options as a tuple (combination, profit).
     """
 
     # Get the length of the shares list
@@ -48,18 +52,23 @@ def maximize_profit(shares_list, max_budget):
         for j in range(1, int(max_budget) + 1):
             # Extract action, cost, and profit from the current share
             action, cost, profit = shares_list[i - 1]
-
             # Check if the current share cost is less than or equal to the current budget
             if cost <= j:
-                # Compute the new profit by adding the current share's profit
-                # with the profit obtained from the remaining budget after buying the current share
-                prev_profit = dp[i - 1][int(j - cost)][1]
-                new_profit = prev_profit + (cost * profit) / 100
+                # Compute the new profit only if (j - cost) is within the valid range
+                if 0 <= int(j - cost) < len(dp[i - 1]):
+                    # Retrieve the previous profit from the valid index
+                    prev_profit = dp[i - 1][int(j - cost)][1]
+                    # Calculate the new profit by adding the current share's profit
+                    # with the profit obtained from the remaining budget after buying the current share
+                    new_profit = prev_profit + (cost * profit) / 100
 
-                # Update the dynamic programming table if the new profit is greater
-                if new_profit > dp[i - 1][j][1]:
-                    dp[i][j] = (i, new_profit)
+                    # Update the dynamic programming table if the new profit is greater
+                    if new_profit > dp[i - 1][j][1]:
+                        dp[i][j] = (i, new_profit)
+                    else:
+                        dp[i][j] = dp[i - 1][j]
                 else:
+                    # If (j - cost) is out of range, skip the computation and use the previous value
                     dp[i][j] = dp[i - 1][j]
             else:
                 dp[i][j] = dp[i - 1][j]
@@ -99,7 +108,7 @@ def display_investment(investment, profit):
 
 
 def main():
-    file_path = '../data/test_shares.csv'
+    file_path = '../data/dataset2_Python+P7.csv'
     max_budget = 500
 
     start_time = time.time()
